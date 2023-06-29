@@ -1,8 +1,18 @@
 const gameContainer = document.getElementById('game');
+const startButton = document.querySelector('#startButton');
+const restartButton = document.querySelector('#restartButton');
 let card1 = null;
 let card2 = null;
 let flippedCards = 0;
 let noMatch = false;
+let score = document.querySelector('.score');
+let currentScore = 0;
+let lowScore = document.querySelector('.lowScore');
+
+if (sessionStorage.getItem('lowScore') === null) {
+  sessionStorage.setItem('lowScore', '50');
+}
+lowScore.innerText = sessionStorage.getItem('lowScore');
 
 const COLORS = [
   'red',
@@ -61,6 +71,22 @@ function createDivsForColors(colorArray) {
   }
 }
 
+startButton.addEventListener('click', startGame);
+
+function startGame() {
+  document.querySelector('.score').innerText = '0';
+  if (startButton.classList[0] === 'start') {
+    startButton.innerText = 'Restart';
+    startButton.classList = '';
+    createDivsForColors(shuffledColors);
+  } else {
+    flippedCards = 0;
+    gameContainer.innerText = '';
+    shuffledColors = shuffle(COLORS);
+    createDivsForColors(shuffledColors);
+  }
+}
+
 // TODO: Implement this function!
 function handleCardClick(event) {
   if (noMatch) {
@@ -70,9 +96,6 @@ function handleCardClick(event) {
     return;
   }
 
-  // you can use event.target to see which element was clicked
-  //   console.log("you just clicked", event.target);
-  //   let clickedCard = event.target;
   event.target.style.backgroundColor = event.target.classList[0];
 
   if (card1 === null) {
@@ -87,23 +110,27 @@ function handleCardClick(event) {
     event.target.classList.add('correct');
     event.target.removeEventListener('click', handleCardClick);
     flippedCards += 2;
-    console.log(flippedCards);
     card1 = null;
     noMatch = false;
     if (flippedCards === COLORS.length) {
       alert('game over!');
+      if (currentScore < parseInt(sessionStorage.getItem('lowScore'))) {
+        sessionStorage.setItem('lowScore', currentScore.toString());
+      }
     }
+
     return;
   }
 
   noMatch = true;
   setTimeout(function () {
+    currentScore = Number(score.innerText);
+    currentScore += 1;
+    score.innerText = currentScore.toString();
     card1.style.backgroundColor = 'white';
     event.target.style.backgroundColor = 'white';
     noMatch = false;
     card1 = null;
+    // guesses += 1;
   }, 1000);
 }
-
-// when the DOM loads
-createDivsForColors(shuffledColors);
