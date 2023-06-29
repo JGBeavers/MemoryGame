@@ -72,7 +72,7 @@ function createDivsForColors(colorArray) {
 }
 
 startButton.addEventListener('click', startGame);
-
+// Start game by adding divs to game board
 function startGame() {
   document.querySelector('.score').innerText = '0';
   if (startButton.classList[0] === 'start') {
@@ -131,6 +131,5 @@ function handleCardClick(event) {
     event.target.style.backgroundColor = 'white';
     noMatch = false;
     card1 = null;
-    // guesses += 1;
   }, 1000);
 }
